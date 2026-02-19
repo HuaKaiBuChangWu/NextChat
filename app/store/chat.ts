@@ -27,6 +27,7 @@ import {
   ServiceProvider,
   StoreKey,
   SUMMARIZE_MODEL,
+  KIMI_SYSTEM_TEMPLATE,
 } from "../constant";
 import Locale, { getLang } from "../locales";
 import { prettyObject } from "../utils/format";
@@ -560,7 +561,20 @@ export const useChatStore = createPersistStore(
 
         var systemPrompts: ChatMessage[] = [];
 
-        if (shouldInjectSystemPrompts) {
+        // 判断当前模型是否为 Kimi 系列
+        const currentModel = session.mask.modelConfig.model.toLowerCase();
+        const isKimiModel = currentModel.includes('kimi') || currentModel.includes('moonshot');
+
+        if (isKimiModel) {
+          // Kimi 模型：注入 Kimi 专用提示词（无论 shouldInjectSystemPrompts 如何）
+          systemPrompts = [
+            createMessage({
+              role: "system",
+              content: KIMI_SYSTEM_TEMPLATE + (mcpEnabled ? mcpSystemPrompt : ""),
+            }),
+          ];
+        } else if (shouldInjectSystemPrompts) {
+          // 原有的 GPT 模型逻辑
           systemPrompts = [
             createMessage({
               role: "system",
@@ -572,6 +586,7 @@ export const useChatStore = createPersistStore(
             }),
           ];
         } else if (mcpEnabled) {
+          // 仅 MCP 的情况（适用于其他模型）
           systemPrompts = [
             createMessage({
               role: "system",

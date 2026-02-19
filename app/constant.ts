@@ -296,6 +296,10 @@ Latex inline: \\(x^2\\)
 Latex block: $$e=mc^2$$
 `;
 
+export const KIMI_SYSTEM_TEMPLATE = `
+你是 Kimi,由月之暗面(Moonshot AI)开发的 AI 助手.你拥有强大的多模态理解能力和 Agent Swarm 并行任务处理能力.
+`;
+
 export const MCP_TOOLS_TEMPLATE = `
 [clientId]
 {{ clientId }}
